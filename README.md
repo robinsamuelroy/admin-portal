@@ -13,6 +13,31 @@ Features
 Technologies Used
  Django, PostgreSQL, Tailwind CSS, HTML5, CSS3
 
+## Development Process
+
+### Project Initialization
+- Created a new Django project and application.
+- Configured settings, including database setup with PostgreSQL.
+
+### Authentication
+- Implemented user authentication using Django's built-in authentication system.
+- Created login and logout views and templates.
+
+### Customer Management and Invoice Management
+- Designed models for Customer data and Invoice data..
+- Created views and templates for listing, creating, and editing customers and Invoices.
+
+### User Interface
+- Utilized Tailwind CSS for styling and responsive design.
+- Designed a clean and modern interface with a sidebar for navigation.
+
+## Contributing
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit them (`git commit -m 'Add some feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a Pull Request.
+
 ## Setup Instructions
 
 Prerequisites
@@ -20,7 +45,7 @@ Prerequisites
 
 Installation
 1. Clone the repository:
-    git clone https://github.com/yourusername/admin_portal.git
+    git clone https://github.com/robinsamuelroy/admin-portal.git
     cd admin_portal
    
 3. Create and activate a virtual environment:
