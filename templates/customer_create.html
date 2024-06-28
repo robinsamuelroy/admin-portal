@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Customer{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen bg-gray-900 text-black">
+    <div class="p-8 rounded-lg shadow-lg w-full max-w-2xl bg-gray-800"> <!-- Increased max-w-3xl for wider container -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-200 mr-4">Create Customer</h2>
+            <a href="{% url 'customer_list' %}" class="bg-green-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Customer List</a>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="id_name" class="block text-sm font-medium text-white mb-2">Name</label>
+                {{ form.name }}
+            </div>
+            <div class="mb-4">
+                <label for="id_email" class="block text-sm font-medium text-white mb-2">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="mb-4">
+                <label for="id_email" class="block text-sm font-medium text-white mb-2">Address</label>
+                {{ form.address }}
+            </div>
+            <div class="mb-4">
+                <label for="id_phone" class="block text-sm font-medium text-white mb-2">Phone</label>
+                {{ form.phone }}
+            </div>
+            <div class="mb-4"> <!-- Added div for button positioning -->
+                <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Create Customer</button>
+            </div>  
+        </form>
+    </div>
+</div>
+{% endblock %}

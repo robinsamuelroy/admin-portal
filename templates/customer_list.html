@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Customer List{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-full">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-white">Customer List</h2>
+            <a href="{% url 'customer_create' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                <i class="fas fa-plus mr-2"></i>Create Customer
+            </a>
+        </div>
+        <div class="bg-gray-700 rounded-lg shadow-md overflow-x-auto" style="max-height: 70vh;">
+            <table class="w-full text-left border-collapse table-auto">
+                <colgroup>
+                    <col class="w-1/4">
+                    <col class="w-1/4">
+                    <col class="w-1/4">
+                    <col class="w-1/4">
+                    <col class="w-auto">
+                </colgroup>
+                <thead>
+                    <tr class="bg-gray-600 text-white">
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-user mr-2"></i>
+                                <span>Customer Name</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-phone mr-2"></i>
+                                <span>Phone</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope mr-2"></i>
+                                <span>Email</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2"></i>
+                                <span>Address</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-edit mr-2"></i>
+                                <span>Actions</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr class="bg-gray-700 hover:bg-gray-600 transition-colors duration-300 border-b border-gray-500">
+                        <td class="px-4 py-3 text-white font-medium">
+                            <div class="flex items-center">
+                                <i class="fas fa-user text-blue-500 mr-2"></i>
+                                <span id="customer_name_{{ customer.pk }}">{{ customer.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-blue-500 mr-2"></i>
+                                <span>{{ customer.phone }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-envelope text-blue-500 mr-2"></i>
+                                <span>{{ customer.email }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-map-marker-alt text-blue-500 mr-2"></i>
+                                <span>{{ customer.address }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 flex items-center justify-end space-x-2">
+                            <a href="{% url 'customer_edit' customer.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </a>
+                            <button type="button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md delete-customer-btn" data-id="{{ customer.pk }}">
+                                <i class="fas fa-trash-alt mr-2"></i>Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Customer Modal -->
+<div id="deleteCustomerModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items--center justify-center hidden">
+    <div class="bg-white p-8 w-full max-w-md mx-auto rounded-lg shadow-lg text-center">
+        <p id="customerDeleteMessage" class="text-lg text-gray-800 mb-4"></p>
+        <form id="deleteCustomerForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="customer_id" name="customer_id">
+            <div class="flex justify-center space-x-2">
+                <button id="deleteSubmitButton" type="button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                    Confirm Delete
+                </button>
+                <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md" onclick="document.getElementById('deleteCustomerModal').style.display = 'none';">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+var deleteButtons = document.querySelectorAll('.delete-customer-btn');
+var modal = document.getElementById('deleteCustomerModal');
+var deleteForm = document.getElementById('deleteCustomerForm');
+var deleteSubmitButton = document.getElementById('deleteSubmitButton');
+var customerDeleteMessage = document.getElementById('customerDeleteMessage');
+
+deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+        var customerId = button.getAttribute('data-id');
+        var customerName = document.querySelector(`#customer_name_${customerId}`).innerText;
+        document.getElementById('customer_id').value = customerId;
+        customerDeleteMessage.innerText = `Are you sure you want to delete ${customerName}?`;
+        modal.style.display = "block";
+    });
+});
+
+deleteSubmitButton.addEventListener('click', function() {
+    var customerId = document.getElementById('customer_id').value;
+    fetch(`/customers/${customerId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            location.reload();
+        } else if (data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the customer.');
+    });
+    modal.style.display = "none";
+});
+</script>
+
+{% endblock %}

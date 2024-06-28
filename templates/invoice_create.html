@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Create Invoice{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen bg-gray-900 text-black">
+    <div class="p-8 rounded-lg shadow-lg w-full max-w-xl bg-gray-800">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-200">Create Invoice</h2>
+            <a href="{% url 'invoice_list' %}" class="bg-green-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Invoice List</a>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label for="id_customer" class="block text-sm font-medium text-gray-400 mb-2">Customer</label>
+                {{ form.customer }}
+            </div>
+            <div class="mb-4">
+                <label for="id_date" class="block text-sm font-medium text-gray-400 mb-2">Date</label>
+                <input type="text" id="datepicker" name="date" class="form-input block w-half px-0.5 py-1 rounded-md border border-gray-700 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 bg-white text-black" required>
+            </div>
+            <div class="mb-4">
+                <label for="id_amount" class="block text-sm font-medium text-gray-400 mb-2">Amount</label>
+                {{ form.amount }}
+            </div>
+            <div class="mb-4">
+                <label for="id_status" class="block text-sm font-medium text-gray-400 mb-2">Status</label>
+                {{ form.status }}
+            </div>
+            <div class="mb-4"> <!-- Added div for button positioning -->
+                <button type="submit" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Create Invoice</button>
+            </div>        
+        </form>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Datepicker initialization
+        $("#datepicker").datepicker({
+            dateFormat: 'yy-mm-dd'  // Set the desired date format
+        });
+    });
+</script>
+{% endblock %}

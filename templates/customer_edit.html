@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Customer{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen bg-gray-900 text-gray-400">
+    <div class="p-8 rounded-lg shadow-lg w-full max-w-3xl bg-gray-800 text-black">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-gray-200 mr-4">Edit Customer</h2>
+            <a href="{% url 'customer_list' %}" class="bg-green-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Customer List</a>
+        </div>
+        <form method="post">
+            {% csrf_token %}
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <label for="id_name" class="text-white font-medium">Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <label for="id_email" class="text-white font-medium">Email:</label>
+                {{ form.email }}
+            </div>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <label for="id_phone" class="text-white font-medium">Phone:</label>
+                {{ form.phone }}
+            </div>
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <label for="id_address" class="text-white font-medium">Address:</label>
+                {{ form.address }}
+            </div>
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">Save Changes</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block title %}Invoice List{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-3xl">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-2xl font-bold text-white">Invoice List</h2>
+            <a href="{% url 'invoice_create' %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                <i class="fas fa-plus mr-2"></i>Create Invoice
+            </a>
+        </div>
+        <div class="bg-gray-700 rounded-lg shadow-md overflow-y-auto" style="max-height: 70vh;">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-gray-600 text-white">
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-user mr-2"></i>
+                                <span>Customer</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-dollar-sign mr-2"></i>
+                                <span>Amount</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                <span>Date</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                <span>Status</span>
+                            </div>
+                        </th>
+                        <th class="px-4 py-3 font-bold border-b border-gray-500">
+                            <div class="flex items-center">
+                                <i class="fas fa-edit mr-2"></i>
+                                <span>Actions</span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr class="border-b border-gray-400 {% if invoice.status == 'Paid' %}bg-green-700 hover:bg-green-600{% elif invoice.status == 'Unpaid' %}bg-yellow-700 hover:bg-yellow-600{% else %}bg-red-700 hover:bg-red-600{% endif %} transition-colors duration-300">
+                        <td class="px-4 py-3 text-white font-medium">
+                            <div class="flex items-center">
+                                <i class="fas fa-user text-blue-500 mr-2"></i>
+                                <span id="invoice_customer_{{ invoice.pk }}">{{ invoice.customer.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-dollar-sign text-blue-500 mr-2"></i>
+                                <span>{{ invoice.amount }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                                <span>{{ invoice.date }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-gray-400">
+                            <div class="flex items-center">
+                                <i class="fas fa-calendar-alt text-blue-500 mr-2"></i>
+                                <span>{{ invoice.status }}</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 flex items-center space-x-2">
+                            <a href="{% url 'invoice_edit' invoice.pk %}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                                <i class="fas fa-edit mr-2"></i>Edit
+                            </a>
+                            <button type="button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md delete-invoice-btn" data-id="{{ invoice.pk }}">
+                                <i class="fas fa-trash-alt mr-2"></i>Delete
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Invoice Modal -->
+<div id="deleteInvoiceModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="bg-white p-8 w-full max-w-md mx-auto rounded-lg shadow-lg text-center">
+        <p id="invoiceDeleteMessage" class="text-lg text-gray-800 mb-4"></p>
+        <form id="deleteInvoiceForm" method="POST">
+            {% csrf_token %}
+            <input type="hidden" id="invoice_id" name="invoice_id">
+            <div class="flex justify-center space-x-2">
+                <button id="deleteSubmitButton" type="button" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md">
+                    Confirm Delete
+                </button>
+                <button type="button" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-md transition-colors duration-300 shadow-md" onclick="document.getElementById('deleteInvoiceModal').style.display = 'none';">
+                    Cancel
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+var deleteButtons = document.querySelectorAll('.delete-invoice-btn');
+var modal = document.getElementById('deleteInvoiceModal');
+var deleteForm = document.getElementById('deleteInvoiceForm');
+var deleteSubmitButton = document.getElementById('deleteSubmitButton');
+var invoiceDeleteMessage = document.getElementById('invoiceDeleteMessage');
+
+deleteButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+        var invoiceId = button.getAttribute('data-id');
+        var customerName = document.querySelector(`#invoice_customer_${invoiceId}`).innerText;
+        document.getElementById('invoice_id').value = invoiceId;
+        invoiceDeleteMessage.innerText = `Are you sure you want to delete the invoice for ${customerName}?`;
+        modal.style.display = "block";
+    });
+});
+
+deleteSubmitButton.addEventListener('click', function() {
+    var invoiceId = document.getElementById('invoice_id').value;
+    fetch(`/invoices/${invoiceId}/delete/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.message) {
+            alert(data.message);
+            location.reload();
+        } else if (data.error) {
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while deleting the invoice.');
+    });
+    modal.style.display = "none";
+});
+</script>
+
+{% endblock %}

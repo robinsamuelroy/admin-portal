@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="flex justify-center items-center h-screen">
+    <div class="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md animate-fade-in-up">
+        <h2 class="text-2xl font-bold mb-4 text-center">Login</h2>
+        {% if error %}
+        <p class="text-red-500 mb-4 text-center">{{ error }}</p>
+        {% endif %}
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label for="username" class="block font-medium mb-1">Username:</label>
+                <input type="text" id="username" name="username" required class="bg-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 animate-fade-in-up">
+            </div>
+            <div>
+                <label for="password" class="block font-medium mb-1">Password:</label>
+                <input type="password" id="password" name="password" required class="bg-gray-700 text-white px-4 py-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-blue-500 animate-fade-in-up">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md animate-bounce">Login</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

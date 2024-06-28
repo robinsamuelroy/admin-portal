@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Administration Panel{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.16/tailwind.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        #sidebar {
+            background: linear-gradient(to bottom, #1e293b, #0f172a);
+            color: #f8fafc;
+            transition: all 0.3s ease-in-out;
+        }
+        #sidebar.show {
+            transform: translateX(0);
+        }
+        #sidebar.hide {
+            transform: translateX(-100%);
+        }
+        #sidebar ul li a {
+            color: #f8fafc;
+            transition: all 0.3s ease-in-out;
+            text-align: center;
+        }
+        #sidebar ul li a:hover {
+            color: #cbd5e1;
+        }
+        @media (max-width: 767px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100%;
+                z-index: 50;
+            }
+        }
+        .username {
+            text-align: center;
+            font-size: 1.25rem; /* Adjust this size as needed */
+            color: #cbd5e1;
+        }
+        .sidebar-links {
+            text-align: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <nav id="sidebar" class="w-64 px-6 py-8 transition-all duration-300 ease-in-out transform translate-x-0 md:translate-x-0">
+            <div class="mb-8 text-center">
+                <h2 class="text-2xl font-bold">
+                    <a href="{% url 'admin_portal' %}" class="hover:text-gray-300">AdminHub</a>
+                </h2>
+                {% if user.is_authenticated %}
+                    <p class="username"><span class="text-blue-500">{{ user.username }}</span></p>
+                {% endif %}
+            </div>
+            <ul class="space-y-4 sidebar-links">
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'customer_list' %}" class="block py-2 px-4 rounded-md hover:bg-gray-700">
+                            <i class="fas fa-users mr-2"></i>Customers
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'invoice_list' %}" class="block py-2 px-4 rounded-md hover:bg-gray-700">
+                            <i class="fas fa-file-invoice-dollar mr-2"></i>Invoices
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'admin_logout' %}" class="block py-2 px-4 rounded-md hover:bg-gray-700">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        <div class="flex-1 p-8">
+            <div class="flex justify-between items-center mb-6 md:hidden">
+                <h2 class="text-2xl font-bold">Admin Portal</h2>
+                <button id="toggleSidebar" class="text-gray-400 hover:text-gray-300 transition-colors duration-300">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            {% block content %}
+            <!-- Main content of each page will go here -->
+            {% endblock %}
+        </div>
+    </div>
+    <script src="https://kit.fontawesome.com/your-font-awesome-kit.js" crossorigin="anonymous"></script>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+
+        toggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+            sidebar.classList.toggle('hide');
+        });
+    </script>
+</body>
+</html>
