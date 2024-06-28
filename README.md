@@ -48,7 +48,7 @@ Admin Portal is a Django-based application designed to manage customer data and 
 ## Setup Instructions
 
 ### Prerequisites
-- Python 3.8 or higher
+- Python 3.8
 - PostgreSQL
 - Git
 
